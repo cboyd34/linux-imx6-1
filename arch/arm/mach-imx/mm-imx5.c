@@ -174,6 +174,26 @@ void __init imx50_soc_init(void)
 					ARRAY_SIZE(imx50_audmux_res));
 }
 
+/*
+ * The MIPI HSC unit has been removed from the i.MX51 Reference Manual by
+ * the Freescale marketing division. However this did not remove the
+ * hardware from the chip which still needs to be configured for proper
+ * IPU support.
+ */
+static void __init imx51_ipu_mipi_setup(void)
+{
+	void __iomem *hsc_addr;
+
+	hsc_addr = MX51_IO_ADDRESS(MX51_MIPI_HSC_BASE_ADDR);
+
+	/* setup MIPI module to legacy mode */
+	__raw_writel(0xf00, hsc_addr);
+
+	/* CSI mode: reserved; DI control mode: legacy (from Freescale BSP) */
+	__raw_writel(__raw_readl(hsc_addr + 0x800) | 0x30ff,
+		hsc_addr + 0x800);
+}
+
 void __init imx51_soc_init(void)
 {
 	/* i.mx51 has the i.mx31 type gpio */
@@ -192,6 +212,7 @@ void __init imx51_soc_init(void)
 	/* i.mx51 has the i.mx31 type audmux */
 	platform_device_register_simple("imx31-audmux", 0, imx51_audmux_res,
 					ARRAY_SIZE(imx51_audmux_res));
+	imx51_ipu_mipi_setup();
 }
 
 void __init imx53_soc_init(void)
