@@ -194,6 +194,21 @@ static void __init imx51_ipu_mipi_setup(void)
 		hsc_addr + 0x800);
 }
 
+#define M4IF_FBPM0	0x40
+#define M4IF_FBPM1	0x44
+#define M4IF_MIF4	0x48
+#define M4IF_FPWC	0x9C
+
+static void __init imx51_m4if_setup(void)
+{
+	void __iomem *base = MX51_IO_ADDRESS(MX51_M4IF_BASE_ADDR);
+
+	__raw_writel(0x001133, base + M4IF_FBPM0);
+	__raw_writel(0x0, base + M4IF_FBPM1);
+	__raw_writel(0x240126, base + M4IF_FPWC);
+	__raw_writel(0x230185, base + M4IF_MIF4);
+}
+
 void __init imx51_soc_init(void)
 {
 	/* i.mx51 has the i.mx31 type gpio */
@@ -213,6 +228,7 @@ void __init imx51_soc_init(void)
 	platform_device_register_simple("imx31-audmux", 0, imx51_audmux_res,
 					ARRAY_SIZE(imx51_audmux_res));
 	imx51_ipu_mipi_setup();
+	imx51_m4if_setup();
 }
 
 void __init imx53_soc_init(void)
