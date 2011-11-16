@@ -488,6 +488,7 @@ static int __devinit sdhci_esdhc_imx_probe(struct platform_device *pdev)
 	struct esdhc_platform_data *boarddata;
 	int err;
 	struct pltfm_imx_data *imx_data;
+	u32 reg;
 
 	host = sdhci_pltfm_init(pdev, &sdhci_esdhc_imx_pdata);
 	if (IS_ERR(host))
@@ -529,6 +530,20 @@ static int __devinit sdhci_esdhc_imx_probe(struct platform_device *pdev)
 	clk_prepare_enable(imx_data->clk_per);
 	clk_prepare_enable(imx_data->clk_ipg);
 	clk_prepare_enable(imx_data->clk_ahb);
+
+	/* disable card interrupt enable bit, and clear status bit
+	 * the default value of this enable bit is 1, but it should
+	 * be 0 regarding to standard host controller spec 2.1.3.
+	 * if this bit is 1, it may cause some problems.
+	 * there's dat1 glitch when some cards inserting into the slot,
+	 * thus wrongly generate a card interrupt that will cause
+	 * system panic because it lacks of sdio handler
+	 * following code will solve the problem.
+	 */
+	reg = sdhci_readl(host, SDHCI_INT_ENABLE);
+	reg &= ~SDHCI_INT_CARD_INT;
+	sdhci_writel(host, reg, SDHCI_INT_ENABLE);
+	sdhci_writel(host, SDHCI_INT_CARD_INT, SDHCI_INT_STATUS);
 
 	host->quirks |= SDHCI_QUIRK_BROKEN_TIMEOUT_VAL;
 
