@@ -183,6 +183,19 @@ static u32 esdhc_readl_le(struct sdhci_host *host, int reg)
 	}
 
 	if (unlikely(reg == SDHCI_INT_STATUS)) {
+		if (is_imx6q_usdhc(imx_data)) {
+			/*
+			 * on mx6q, there is low possibility that
+			 * DATA END interrupt comes ealier than DMA
+			 * END interrupt which is conflict with standard
+			 * host controller spec. In this case, read the
+			 * status register again will workaround this issue.
+			 */
+			if ((val & SDHCI_INT_DATA_END) && \
+				!(val & SDHCI_INT_DMA_END))
+				val = readl(host->ioaddr + reg);
+		}
+
 		if (val & SDHCI_INT_VENDOR_SPEC_DMA_ERR) {
 			val &= ~SDHCI_INT_VENDOR_SPEC_DMA_ERR;
 			val |= SDHCI_INT_ADMA_ERROR;
