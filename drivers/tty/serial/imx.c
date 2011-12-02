@@ -695,7 +695,9 @@ static int imx_startup(struct uart_port *port)
 	int retval;
 	unsigned long flags, temp;
 
+#ifndef CONFIG_SERIAL_CORE_CONSOLE
 	imx_setup_ufcr(sport, 0);
+#endif
 
 	/* disable the DREN bit (Data Ready interrupt enable) before
 	 * requesting IRQs
