@@ -418,6 +418,7 @@ int __init mx6q_clocks_init(void)
 	clk_register_clkdev(clk[sdma], NULL, "20ec000.sdma");
 	clk_register_clkdev(clk[dummy], NULL, "20bc000.wdog");
 	clk_register_clkdev(clk[dummy], NULL, "20c0000.wdog");
+	clk_register_clkdev(clk[arm], NULL, "cpu");
 
 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++) {
 		c = clk_get_sys(clks_init_on[i], NULL);
