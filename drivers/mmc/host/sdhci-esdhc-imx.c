@@ -453,6 +453,8 @@ sdhci_esdhc_imx_probe_dt(struct platform_device *pdev,
 	if (gpio_is_valid(boarddata->wp_gpio))
 		boarddata->wp_type = ESDHC_WP_GPIO;
 
+	if (of_get_property(np, "support-vdd-180", NULL))
+		boarddata->vdd_180 = 1;
 	return 0;
 }
 #else
@@ -553,6 +555,16 @@ static int __devinit sdhci_esdhc_imx_probe(struct platform_device *pdev)
 		}
 	} else {
 		boarddata->wp_gpio = -EINVAL;
+	}
+
+	/* The imx6q uSDHC capabilities will always claim to support 1.8V
+	 * while this is board specific,  should be initialized properly
+	 */
+	if (is_imx6q_usdhc(imx_data)) {
+		host->quirks |= SDHCI_QUIRK_MISSING_CAPS;
+		host->caps = readl(host->ioaddr + SDHCI_CAPABILITIES);
+		if (!boarddata->vdd_180)
+			host->caps &= ~SDHCI_CAN_VDD_180;
 	}
 
 	/* card_detect */

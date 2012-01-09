@@ -224,6 +224,12 @@ struct mmc_host {
 #define MMC_CAP_CMD23		(1 << 30)	/* CMD23 supported. */
 #define MMC_CAP_HW_RESET	(1 << 31)	/* Hardware reset */
 
+#define MMC_CAP_UHS		(MMC_CAP_UHS_SDR12 |\
+				 MMC_CAP_UHS_SDR25 |\
+				 MMC_CAP_UHS_SDR50 |\
+				 MMC_CAP_UHS_SDR104 |\
+				 MMC_CAP_UHS_DDR50)
+
 	unsigned int		caps2;		/* More host capabilities */
 
 #define MMC_CAP2_BOOTPART_NOACC	(1 << 0)	/* Boot partition no access */
