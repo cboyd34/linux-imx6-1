@@ -446,6 +446,8 @@ static int __init imx6q_thermal_init(void)
 	}
 
 	fuse_data = readl_relaxed(ocotp_base + HW_OCOTP_ANA1);
+	if (fuse_data == 0)
+		fuse_data = 0x5704c67d;
 
 	th_zone = kzalloc(sizeof(struct imx6q_thermal_zone), GFP_KERNEL);
 	if (!th_zone) {
