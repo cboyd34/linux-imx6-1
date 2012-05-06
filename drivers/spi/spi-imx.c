@@ -37,6 +37,7 @@
 #include <linux/of.h>
 #include <linux/of_device.h>
 #include <linux/of_gpio.h>
+#include <linux/pinctrl/consumer.h>
 
 #include <mach/spi.h>
 
@@ -759,6 +760,7 @@ static int __devinit spi_imx_probe(struct platform_device *pdev)
 	struct spi_master *master;
 	struct spi_imx_data *spi_imx;
 	struct resource *res;
+	struct pinctrl *pinctrl;
 	int i, ret, num_cs;
 
 	if (!np && !mxc_platform_info) {
@@ -849,6 +851,12 @@ static int __devinit spi_imx_probe(struct platform_device *pdev)
 	spi_imx->clk_ipg = devm_clk_get(&pdev->dev, "ipg");
 	if (IS_ERR(spi_imx->clk_ipg)) {
 		ret = PTR_ERR(spi_imx->clk_ipg);
+		goto out_free_irq;
+	}
+
+	pinctrl = devm_pinctrl_get_select_default(&pdev->dev);
+	if (IS_ERR(pinctrl)) {
+		ret = PTR_ERR(pinctrl);
 		goto out_free_irq;
 	}
 
