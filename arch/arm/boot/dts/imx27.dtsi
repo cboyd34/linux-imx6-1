@@ -206,6 +206,14 @@
 				status = "disabled";
 			};
 
+			lcdc: lcdc@10021000 {
+				#crtc-cells = <0>;
+				compatible = "fsl,imx27-lcdc", "fsl,imx21-lcdc";
+				reg = <0x10021000 0x4000>;
+				interrupts = <61>;
+				status = "disabled";
+			};
+
 			fec: ethernet@1002b000 {
 				compatible = "fsl,imx27-fec";
 				reg = <0x1002b000 0x4000>;
