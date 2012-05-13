@@ -26,6 +26,7 @@
 #include <linux/pinctrl/machine.h>
 #include <linux/phy.h>
 #include <linux/micrel_phy.h>
+#include <linux/mfd/anatop.h>
 #include <asm/smp_twd.h>
 #include <asm/cpuidle.h>
 #include <asm/hardware/cache-l2x0.h>
@@ -144,6 +145,45 @@ static void __init imx6q_post_populate(void)
 	imx6q_config_on_boot();
 }
 
+static void __init imx6q_usb_init(void)
+{
+	struct device_node *np;
+	struct platform_device *pdev = NULL;
+	struct anatop *adata = NULL;
+
+	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-anatop");
+	if (np)
+		pdev = of_find_device_by_node(np);
+	if (pdev)
+		adata = platform_get_drvdata(pdev);
+	if (!adata) {
+		if (np)
+			of_node_put(np);
+		return;
+	}
+
+#define HW_ANADIG_USB1_CHRG_DETECT		0x000001b0
+#define HW_ANADIG_USB2_CHRG_DETECT		0x00000210
+
+#define BM_ANADIG_USB_CHRG_DETECT_EN_B		0x00100000
+#define BM_ANADIG_USB_CHRG_DETECT_CHK_CHRG_B	0x00080000
+
+	/*
+	 * The external charger detector needs to be disabled,
+	 * or the signal at DP will be poor
+	 */
+	anatop_write_reg(adata, HW_ANADIG_USB1_CHRG_DETECT,
+			BM_ANADIG_USB_CHRG_DETECT_EN_B
+			| BM_ANADIG_USB_CHRG_DETECT_CHK_CHRG_B,
+			~0);
+	anatop_write_reg(adata, HW_ANADIG_USB2_CHRG_DETECT,
+			BM_ANADIG_USB_CHRG_DETECT_EN_B |
+			BM_ANADIG_USB_CHRG_DETECT_CHK_CHRG_B,
+			~0);
+
+	of_node_put(np);
+}
+
 static void __init imx6q_init_machine(void)
 {
 	struct device_node *np;
@@ -165,6 +205,7 @@ static void __init imx6q_init_machine(void)
 	imx6q_post_populate();
 
 	imx6q_pm_init();
+	imx6q_usb_init();
 }
 
 static struct cpuidle_driver imx6q_cpuidle_driver = {
