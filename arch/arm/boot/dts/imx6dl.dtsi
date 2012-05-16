@@ -21,13 +21,6 @@
 			compatible = "arm,cortex-a9";
 			reg = <0>;
 			next-level-cache = <&L2>;
-			cpu-freqs = <996000000 792000000 396000000 198000000>;
-			cpu-volts = <	/* min		max */
-					1225000		1450000	/* 996M */
-					1100000		1450000	/* 792M */
-					950000		1450000	/* 396M */
-					850000		1450000>; /* 198M */
-			trans-latency = <61036>; /* two CLK32 periods */
 		};
 
 		cpu@1 {
@@ -35,31 +28,34 @@
 			reg = <1>;
 			next-level-cache = <&L2>;
 		};
-
-		cpu@2 {
-			compatible = "arm,cortex-a9";
-			reg = <2>;
-			next-level-cache = <&L2>;
-		};
-
-		cpu@3 {
-			compatible = "arm,cortex-a9";
-			reg = <3>;
-			next-level-cache = <&L2>;
-		};
 	};
 
 	soc {
 		aips1: aips-bus@02000000 {
-			spba-bus@02000000 {
-				ecspi5: ecspi@02018000 {
-					#address-cells = <1>;
-					#size-cells = <0>;
-					compatible = "fsl,imx51-ecspi";
-					reg = <0x02018000 0x4000>;
-					interrupts = <0 35 0x04>;
-					status = "disabled";
-				};
+			pxp@020f0000 {
+				reg = <0x020f0000 0x4000>;
+				interrupts = <0 98 0x04>;
+			};
+
+			epdc@020f4000 {
+				reg = <0x020f4000 0x4000>;
+				interrupts = <0 97 0x04>;
+			};
+
+			lcdif@020f8000 {
+				reg = <0x020f8000 0x4000>;
+				interrupts = <0 39 0x04>;
+			};
+		};
+
+		aips2: aips-bus@02100000 {
+			i2c4: i2c@021f8000 {
+				#address-cells = <1>;
+				#size-cells = <0>;
+				compatible = "fsl,imx1-i2c";
+				reg = <0x021f8000 0x4000>;
+				interrupts = <0 35 0x04>;
+				status = "disabled";
 			};
 		};
 	};
