@@ -1059,7 +1059,7 @@ static int __clk_set_parent(struct clk *clk, struct clk *parent)
 {
 	struct clk *old_parent;
 	unsigned long flags;
-	int ret = -EINVAL;
+	int ret;
 	u8 i;
 
 	old_parent = clk->parent;
@@ -1083,7 +1083,13 @@ static int __clk_set_parent(struct clk *clk, struct clk *parent)
 	if (i == clk->num_parents) {
 		pr_debug("%s: clock %s is not a possible parent of clock %s\n",
 				__func__, parent->name, clk->name);
-		goto out;
+		return -EINVAL;
+	}
+
+	if (clk->flags & CLK_SET_PARENT_GATE) {
+		ret = clk->ops->set_parent(clk->hw, i);
+		clk->parent = parent;
+		return ret;
 	}
 
 	/* migrate prepare and enable */
