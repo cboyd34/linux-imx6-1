@@ -323,6 +323,7 @@ inline int __clk_get_enable_count(struct clk *clk);
 inline int __clk_get_prepare_count(struct clk *clk);
 unsigned long __clk_get_rate(struct clk *clk);
 unsigned long __clk_get_flags(struct clk *clk);
+int __clk_set_flags(struct clk *clk, unsigned long flags);
 int __clk_is_enabled(struct clk *clk);
 struct clk *__clk_lookup(const char *name);
 

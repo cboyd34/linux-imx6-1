@@ -304,6 +304,16 @@ inline unsigned long __clk_get_flags(struct clk *clk)
 	return !clk ? -EINVAL : clk->flags;
 }
 
+inline int __clk_set_flags(struct clk *clk, unsigned long flags)
+{
+	if (!clk)
+		return -ENODEV;
+
+	clk->flags = flags;
+
+	return 0;
+}
+
 int __clk_is_enabled(struct clk *clk)
 {
 	int ret;
