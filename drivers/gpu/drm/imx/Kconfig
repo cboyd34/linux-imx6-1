@@ -26,6 +26,10 @@ config DRM_IMX_PARALLEL_DISPLAY
 	tristate "Support for parallel displays"
 	depends on DRM_IMX
 
+config DRM_IMX_LDB
+	tristate "Support for LVDS displays"
+	depends on DRM_IMX
+
 config DRM_IMX_IPUV3_CORE
 	tristate "IPUv3 core support"
 	depends on DRM_IMX
