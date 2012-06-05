@@ -152,13 +152,13 @@ enum mx6q_clks {
 	ssi2, ssi3, uart_ipg, uart_serial, usboh3, usdhc1, usdhc2, usdhc3,
 	usdhc4, vdo_axi, vpu_axi, cko1, pll1_sys, pll2_bus, pll3_usb_otg,
 	pll4_audio, pll5_video, pll6_mlb, pll7_usb_host, pll8_enet, ssi1_ipg,
-	ssi2_ipg, ssi3_ipg, usbphy1, usbphy2, clk_max
+	ssi2_ipg, ssi3_ipg, usbphy1, usbphy2, rom, clk_max
 };
 
 static struct clk *clk[clk_max];
 
 static enum mx6q_clks const clks_init_on[] __initconst = {
-	mmdc_ch0_axi, mmdc_ch1_axi, usboh3,
+	mmdc_ch0_axi, rom, usboh3,
 };
 
 int __init mx6q_clocks_init(void)
@@ -367,6 +367,7 @@ int __init mx6q_clocks_init(void)
 	clk[gpmi_bch]     = imx_clk_gate2("gpmi_bch",      "usdhc4",            base + 0x78, 26);
 	clk[gpmi_io]      = imx_clk_gate2("gpmi_io",       "enfc",              base + 0x78, 28);
 	clk[gpmi_apb]     = imx_clk_gate2("gpmi_apb",      "usdhc3",            base + 0x78, 30);
+	clk[rom]          = imx_clk_gate2("rom",           "ahb",               base + 0x7c, 0);
 	clk[sata]         = imx_clk_gate2("sata",          "ipg",               base + 0x7c, 4);
 	clk[sdma]         = imx_clk_gate2("sdma",          "ahb",               base + 0x7c, 6);
 	clk[spba]         = imx_clk_gate2("spba",          "ipg",               base + 0x7c, 12);
