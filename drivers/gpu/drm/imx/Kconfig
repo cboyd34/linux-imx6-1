@@ -16,6 +16,12 @@ config DRM_IMX_FB_HELPER
 	  for your device. This is necessary to get a framebuffer console
 	  and also for appplications using the legacy framebuffer API
 
+config DRM_IMX_LCDC
+	tristate "DRM Support for Freescale i.MX1 and i.MX2"
+	depends on DRM_IMX
+	help
+	  Choose this if you have a i.MX1, i.MX21, i.MX25 or i.MX27 processor.
+
 config DRM_IMX_PARALLEL_DISPLAY
 	tristate "Support for parallel displays"
 	depends on DRM_IMX
