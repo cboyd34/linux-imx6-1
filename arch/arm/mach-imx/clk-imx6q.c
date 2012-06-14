@@ -431,6 +431,25 @@ int __init mx6q_clocks_init(void)
 	clk_register_clkdev(clk[cko1_sel], "cko1_sel", NULL);
 	clk_register_clkdev(clk[ahb], "ahb", NULL);
 	clk_register_clkdev(clk[cko1], "cko1", NULL);
+	clk_register_clkdev(clk[ipu1], "bus", "2400000.ipu");
+	clk_register_clkdev(clk[ipu1_di0], "di0", "2400000.ipu");
+	clk_register_clkdev(clk[ipu1_di1], "di1", "2400000.ipu");
+	clk_register_clkdev(clk[ipu2], "bus", "2800000.ipu");
+	clk_register_clkdev(clk[ipu2_di0], "di0", "2800000.ipu");
+	clk_register_clkdev(clk[ipu2_di1], "di1", "2800000.ipu");
+	clk_register_clkdev(clk[hdmi_isfr], "isfr", "120000.hdmi");
+	clk_register_clkdev(clk[hdmi_iahb], "iahb", "120000.hdmi");
+
+	clk_set_rate(clk[pll5_video], 650000000);
+	clk_set_parent(clk[ipu1_di0_sel], clk[ipu1_di0_pre]);
+	clk_set_parent(clk[ipu1_di1_sel], clk[ipu1_di1_pre]);
+	clk_set_parent(clk[ipu2_di0_sel], clk[ipu2_di0_pre]);
+	clk_set_parent(clk[ipu2_di1_sel], clk[ipu2_di1_pre]);
+
+	clk_set_parent(clk[ipu1_di0_pre_sel], clk[pll5_video]);
+	clk_set_parent(clk[ipu1_di1_pre_sel], clk[pll5_video]);
+	clk_set_parent(clk[ipu2_di0_pre_sel], clk[pll5_video]);
+	clk_set_parent(clk[ipu2_di1_pre_sel], clk[pll5_video]);
 
 	for (i = 0; i < ARRAY_SIZE(clks_init_on); i++)
 		clk_prepare_enable(clk[clks_init_on[i]]);
