@@ -51,9 +51,18 @@
 #else
 #define MX3_IPU_IRQS 0
 #endif
-/* REVISIT: Add IPU irqs on IMX51 */
 
-#define NR_IRQS			(MXC_IPU_IRQ_START + MX3_IPU_IRQS)
+#if defined(CONFIG_DRM_IMX_IPUV3) || defined(CONFIG_DRM_IMX_IPUV3_MODULE)
+#if defined(CONFIG_SOC_IMX6Q)
+#define IMX_IPUV3_IRQS (32 * 5 * 2)
+#else
+#define IMX_IPUV3_IRQS (32 * 5)
+#endif
+#else
+#define IMX_IPUV3_IRQS 0
+#endif
+
+#define NR_IRQS			(MXC_IPU_IRQ_START + MX3_IPU_IRQS + IMX_IPUV3_IRQS)
 
 extern int imx_irq_set_priority(unsigned char irq, unsigned char prio);
 
