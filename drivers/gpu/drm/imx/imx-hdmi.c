@@ -84,7 +84,22 @@
 #define YCBCR422_8BITS		3
 #define XVYCC444            4
 
+#define MX6Q_IOMUXC_BASE_ADDR  0x020e0000
+
 static void __iomem *hdmi_base;
+static void __iomem *iomuxc_base;
+
+#define IOMUXC_IOMUXC_GPR3	0x000c
+#define GPR3_HDMI_MUX_CTL_SHIFT	2
+
+static void imx_hdmi_set_ipu_di_mux(int ipu_di)
+{
+	u32 tmp;
+
+	tmp = readl(iomuxc_base + IOMUXC_IOMUXC_GPR3) & ~0xc;
+	writel(ipu_di << GPR3_HDMI_MUX_CTL_SHIFT,
+		iomuxc_base + IOMUXC_IOMUXC_GPR3);
+}
 
 static inline void hdmi_writeb(u8 val, int offset)
 {
@@ -1946,6 +1961,7 @@ static void imx_hdmi_encoder_commit(struct drm_encoder *encoder)
 	struct imx_hdmi *hdmi = container_of(encoder, struct imx_hdmi, encoder);
 	int mux = imx_drm_encoder_get_mux_id(hdmi->imx_drm_encoder, encoder->crtc);
 
+	imx_hdmi_set_ipu_di_mux(mux);
 
 	imx_hdmi_poweron(hdmi);
 }
@@ -2094,6 +2110,10 @@ static int __devinit imx_hdmi_platform_probe(struct platform_device *pdev)
 	}
 
 	hdmi_base = hdmi->regs;
+
+	iomuxc_base = devm_ioremap(&pdev->dev, MX6Q_IOMUXC_BASE_ADDR, 0x4000);
+	if (!iomuxc_base)
+		return -ENOMEM;
 
 	hdmi->hdmi_isfr_clk = clk_get(hdmi->dev, "isfr");
 	if (IS_ERR(hdmi->hdmi_isfr_clk)) {
