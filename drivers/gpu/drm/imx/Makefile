@@ -9,3 +9,4 @@ obj-$(CONFIG_DRM_IMX_LCDC) += imx-lcdc-crtc.o
 obj-$(CONFIG_DRM_IMX_FB_HELPER) += imx-fbdev.o
 obj-$(CONFIG_DRM_IMX_IPUV3_CORE) += ipu-v3/
 obj-$(CONFIG_DRM_IMX_IPUV3)	+= imx-ipuv3-crtc.o
+obj-$(CONFIG_DRM_IMX_HDMI) += imx-hdmi.o
