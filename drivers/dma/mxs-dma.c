@@ -25,7 +25,6 @@
 #include <linux/fsl/mxs-dma.h>
 
 #include <asm/irq.h>
-#include <mach/mxs.h>
 #include <mach/common.h>
 
 #include "dmaengine.h"
