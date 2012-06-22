@@ -1685,7 +1685,7 @@ static int udc_start(struct ci13xxx *ci)
 	ci->gadget.ep0 = &ci->ep0in->ep;
 
 	if (ci->global_phy) {
-		ci->transceiver = usb_get_phy();
+		ci->transceiver = usb_get_phy(USB_PHY_TYPE_USB2);
 
 	if (ci->platdata->flags & CI13XXX_REQUIRE_TRANSCEIVER) {
 		if (ci->transceiver == NULL) {
