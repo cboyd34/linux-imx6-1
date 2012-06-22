@@ -95,4 +95,9 @@ config OF_MTD
 	depends on MTD
 	def_bool y
 
+config OF_VIDEOMODE
+	def_bool y
+	help
+	  helper to parse videomodes from the devicetree
+
 endmenu # OF
