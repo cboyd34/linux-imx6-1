@@ -14,6 +14,7 @@
 #include <linux/device.h>
 #include <linux/dmapool.h>
 #include <linux/dma-mapping.h>
+#include <linux/err.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/module.h>
@@ -1710,7 +1711,7 @@ static int udc_start(struct ci13xxx *ci)
 	if (retval)
 		goto unreg_device;
 
-	if (ci->transceiver) {
+	if (!IS_ERR_OR_NULL(ci->transceiver)) {
 		retval = otg_set_peripheral(ci->transceiver->otg,
 						&ci->gadget);
 		if (retval)
@@ -1727,7 +1728,7 @@ static int udc_start(struct ci13xxx *ci)
 	return retval;
 
 remove_trans:
-	if (ci->transceiver) {
+	if (!IS_ERR_OR_NULL(ci->transceiver)) {
 		otg_set_peripheral(ci->transceiver->otg, &ci->gadget);
 		if (ci->global_phy)
 			usb_put_phy(ci->transceiver);
@@ -1739,7 +1740,7 @@ remove_dbg:
 unreg_device:
 	device_unregister(&ci->gadget.dev);
 put_transceiver:
-	if (ci->transceiver && ci->global_phy)
+	if (!IS_ERR_OR_NULL(ci->transceiver) && ci->global_phy)
 		usb_put_phy(ci->transceiver);
 free_pools:
 	dma_pool_destroy(ci->td_pool);
@@ -1771,7 +1772,7 @@ static void udc_stop(struct ci13xxx *ci)
 	dma_pool_destroy(ci->td_pool);
 	dma_pool_destroy(ci->qh_pool);
 
-	if (ci->transceiver) {
+	if (!IS_ERR_OR_NULL(ci->transceiver)) {
 		otg_set_peripheral(ci->transceiver->otg, NULL);
 		if (ci->global_phy)
 			usb_put_phy(ci->transceiver);
