@@ -26,6 +26,7 @@
 #include <linux/can/platform/flexcan.h>
 #include <linux/clk.h>
 #include <linux/delay.h>
+#include <linux/gpio.h>
 #include <linux/if_arp.h>
 #include <linux/if_ether.h>
 #include <linux/interrupt.h>
@@ -34,6 +35,7 @@
 #include <linux/list.h>
 #include <linux/module.h>
 #include <linux/of.h>
+#include <linux/of_gpio.h>
 #include <linux/platform_device.h>
 #include <linux/pinctrl/consumer.h>
 
@@ -180,6 +182,11 @@ struct flexcan_priv {
 
 	struct clk *clk;
 	struct flexcan_platform_data *pdata;
+
+	int phy_en_gpio;
+	int phy_stby_gpio;
+	bool phy_en_high;
+	bool phy_stby_high;
 };
 
 static struct can_bittiming_const flexcan_bittiming_const = {
@@ -224,6 +231,17 @@ static inline void flexcan_write(u32 val, void __iomem *addr)
  */
 static void flexcan_transceiver_switch(const struct flexcan_priv *priv, int on)
 {
+	/*
+	 * on == 1: enable phy and exit standby
+	 * on == 0: disable phy and enter standby
+	 */
+	if (gpio_is_valid(priv->phy_en_gpio))
+		gpio_set_value(priv->phy_en_gpio,
+			       priv->phy_en_high ? on : !on);
+	if (gpio_is_valid(priv->phy_stby_gpio))
+		gpio_set_value(priv->phy_stby_gpio,
+			       priv->phy_stby_high ? !on : on);
+
 	if (priv->pdata && priv->pdata->transceiver_switch)
 		priv->pdata->transceiver_switch(on);
 }
@@ -933,6 +951,10 @@ static int __devinit flexcan_probe(struct platform_device *pdev)
 	resource_size_t mem_size;
 	int err, irq;
 	u32 clock_freq = 0;
+	int phy_en_gpio = -EINVAL;
+	int phy_stby_gpio = -EINVAL;
+	bool phy_en_high = true;
+	bool phy_stby_high = true;
 
 	pinctrl = devm_pinctrl_get_select_default(&pdev->dev);
 	if (IS_ERR(pinctrl))
@@ -940,11 +962,46 @@ static int __devinit flexcan_probe(struct platform_device *pdev)
 
 	if (pdev->dev.of_node) {
 		const u32 *clock_freq_p;
+		enum of_gpio_flags flags;
 
 		clock_freq_p = of_get_property(pdev->dev.of_node,
 						"clock-frequency", NULL);
 		if (clock_freq_p)
 			clock_freq = *clock_freq_p;
+
+		phy_en_gpio = of_get_named_gpio_flags(pdev->dev.of_node,
+						      "phy-enable-gpios",
+						       0, &flags);
+		if (gpio_is_valid(phy_en_gpio)) {
+			if (flags == OF_GPIO_ACTIVE_LOW)
+				phy_en_high = false;
+			err = devm_gpio_request_one(&pdev->dev, phy_en_gpio,
+						    GPIOF_DIR_OUT,
+						    "phy-enable");
+			if (err) {
+				dev_err(&pdev->dev,
+					"failed to request gpio %d: %d\n",
+					phy_en_gpio, err);
+				goto failed_gpio;
+			}
+		}
+
+		phy_stby_gpio = of_get_named_gpio_flags(pdev->dev.of_node,
+							"phy-standby-gpios",
+							0, &flags);
+		if (gpio_is_valid(phy_stby_gpio)) {
+			if (flags == OF_GPIO_ACTIVE_LOW)
+				phy_stby_high = false;
+			err = devm_gpio_request_one(&pdev->dev, phy_stby_gpio,
+						    GPIOF_DIR_OUT,
+						    "phy-standby");
+			if (err) {
+				dev_err(&pdev->dev,
+					"failed to request gpio %d: %d\n",
+					phy_stby_gpio, err);
+				goto failed_gpio;
+			}
+		}
 	}
 
 	if (!clock_freq) {
@@ -997,6 +1054,10 @@ static int __devinit flexcan_probe(struct platform_device *pdev)
 	priv->base = base;
 	priv->dev = dev;
 	priv->clk = clk;
+	priv->phy_en_gpio = phy_en_gpio;
+	priv->phy_en_high = phy_en_high;
+	priv->phy_stby_gpio = phy_stby_gpio;
+	priv->phy_stby_high = phy_stby_high;
 	priv->pdata = pdev->dev.platform_data;
 
 	netif_napi_add(dev, &priv->napi, flexcan_poll, FLEXCAN_NAPI_WEIGHT);
@@ -1025,6 +1086,7 @@ static int __devinit flexcan_probe(struct platform_device *pdev)
 	if (clk)
 		clk_put(clk);
  failed_clock:
+ failed_gpio:
 	return err;
 }
 
