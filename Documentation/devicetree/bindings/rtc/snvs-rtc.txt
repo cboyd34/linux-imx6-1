@@ -1,0 +1,19 @@
+* Freescale Secure Non-Volatile Storage (SNVS) RTC
+
+Required properties:
+- compatible: Should be "fsl,sec-v4.0-mon"
+  See Documentation/devicetree/bindings/crypto/fsl-sec4.txt for details.
+- reg: Physical base address of the controller and length of memory mapped
+  region.
+- interrupts: Two interrupt numbers to the cpu should be specified. First
+  interrupt number is the consolidated interrupt in non TrustZone. The second
+  interrupt number is the security interrupt in TrustZone. The number of cells
+  representing a interrupt depends on the parent interrupt controller.
+
+Example:
+
+snvs@020cc000 {
+       compatible = "fsl,sec-v4.0-mon";
+       reg = <0x020cc000 0x4000>;
+       interrupts = <0 19 0x04 0 20 0x04>;
+};
