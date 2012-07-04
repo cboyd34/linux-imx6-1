@@ -1759,6 +1759,7 @@ free_pools:
 	dma_pool_destroy(ci->td_pool);
 free_qh_pool:
 	dma_pool_destroy(ci->qh_pool);
+	memset(&ci->gadget, 0, sizeof(ci->gadget));
 	return retval;
 }
 
