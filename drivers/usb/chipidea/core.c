@@ -473,8 +473,11 @@ static int __devinit ci_hdrc_probe(struct platform_device *pdev)
 	ret = ci_role_start(ci, ci->role);
 	if (ret) {
 		dev_err(dev, "can't start %s role\n", ci_role(ci)->name);
-		ret = -ENODEV;
-		goto rm_wq;
+		ci->role = CI_ROLE_END;
+		if (!ci->is_otg) {
+			ret = -ENODEV;
+			goto rm_wq;
+		}
 	}
 
 	platform_set_drvdata(pdev, ci);
