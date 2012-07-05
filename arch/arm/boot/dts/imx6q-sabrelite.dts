@@ -29,6 +29,10 @@
 	};
 
 	soc {
+		hdmi@00120000 {
+			status = "okay";
+		};
+
 		aips-bus@02000000 { /* AIPS1 */
 			spba-bus@02000000 {
 				ecspi@02008000 { /* eCSPI1 */
