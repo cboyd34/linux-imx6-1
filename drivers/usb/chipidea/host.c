@@ -106,6 +106,12 @@ static int host_start(struct ci13xxx *ci)
 	if (usb_disabled())
 		return -ENODEV;
 
+	if (ci->platdata->set_vbus_power) {
+		ret = ci->platdata->set_vbus_power(ci, 1);
+		if (ret)
+			return ret;
+	}
+
 	hcd = usb_create_hcd(&ci_ehci_hc_driver, ci->dev, dev_name(ci->dev));
 	if (!hcd)
 		return -ENOMEM;
@@ -138,6 +144,8 @@ static void host_stop(struct ci13xxx *ci)
 
 	usb_remove_hcd(hcd);
 	usb_put_hcd(hcd);
+	if (ci->platdata->set_vbus_power)
+		ci->platdata->set_vbus_power(ci, 0);
 }
 
 int ci_hdrc_host_init(struct ci13xxx *ci)

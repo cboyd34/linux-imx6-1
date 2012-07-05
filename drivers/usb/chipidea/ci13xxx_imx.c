@@ -26,6 +26,8 @@
 
 #define pdev_to_phy(pdev) \
 	((struct usb_phy *)platform_get_drvdata(pdev))
+#define ci_to_imx_data(ci) \
+	((struct ci13xxx_imx_data *)dev_get_drvdata(ci->dev->parent))
 
 struct ci13xxx_imx_data {
 	struct device_node *phy_np;
@@ -35,12 +37,32 @@ struct ci13xxx_imx_data {
 	struct regulator *reg_vbus;
 };
 
+static int ci13xxx_imx_vbus(struct ci13xxx *ci, int enable)
+{
+	struct ci13xxx_imx_data *data = ci_to_imx_data(ci);
+	int ret;
+
+	if (!data->reg_vbus)
+		return 0;
+
+	if (enable)
+		ret = regulator_enable(data->reg_vbus);
+	else
+		ret = regulator_disable(data->reg_vbus);
+	if (ret)
+		dev_err(ci->dev, "ci13xxx_imx_vbus failed, enable:%d err:%d\n",
+			enable, ret);
+
+	return ret;
+}
+
 static struct ci13xxx_platform_data ci13xxx_imx_platdata __devinitdata  = {
 	.name			= "ci13xxx_imx",
 	.flags			= CI13XXX_REQUIRE_TRANSCEIVER |
 				  CI13XXX_PULLUP_ON_VBUS |
 				  CI13XXX_DISABLE_STREAMING,
 	.capoffset		= DEF_CAPOFFSET,
+	.set_vbus_power		= ci13xxx_imx_vbus,
 };
 
 static int __devinit ci13xxx_imx_probe(struct platform_device *pdev)
@@ -101,18 +123,10 @@ static int __devinit ci13xxx_imx_probe(struct platform_device *pdev)
 
 	/* we only support host now, so enable vbus here */
 	reg_vbus = devm_regulator_get(&pdev->dev, "vbus");
-	if (!IS_ERR(reg_vbus)) {
-		ret = regulator_enable(reg_vbus);
-		if (ret) {
-			dev_err(&pdev->dev,
-				"Failed to enable vbus regulator, err=%d\n",
-				ret);
-			goto put_np;
-		}
+	if (!IS_ERR(reg_vbus))
 		data->reg_vbus = reg_vbus;
-	} else {
+	else
 		reg_vbus = NULL;
-	}
 
 	ci13xxx_imx_platdata.phy = data->phy;
 
@@ -127,6 +141,9 @@ static int __devinit ci13xxx_imx_probe(struct platform_device *pdev)
 		*pdev->dev.dma_mask = DMA_BIT_MASK(32);
 		dma_set_coherent_mask(&pdev->dev, *pdev->dev.dma_mask);
 	}
+
+	platform_set_drvdata(pdev, data);
+
 	plat_ci = ci13xxx_add_device(&pdev->dev,
 				pdev->resource, pdev->num_resources,
 				&ci13xxx_imx_platdata);
@@ -139,7 +156,6 @@ static int __devinit ci13xxx_imx_probe(struct platform_device *pdev)
 	}
 
 	data->ci_pdev = plat_ci;
-	platform_set_drvdata(pdev, data);
 
 	pm_runtime_no_callbacks(&pdev->dev);
 	pm_runtime_enable(&pdev->dev);
@@ -149,7 +165,6 @@ static int __devinit ci13xxx_imx_probe(struct platform_device *pdev)
 err:
 	if (reg_vbus)
 		regulator_disable(reg_vbus);
-put_np:
 	if (phy_np)
 		of_node_put(phy_np);
 	clk_disable_unprepare(data->clk);

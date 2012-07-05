@@ -23,6 +23,8 @@ struct ci13xxx_platform_data {
 #define CI13XXX_CONTROLLER_RESET_EVENT		0
 #define CI13XXX_CONTROLLER_STOPPED_EVENT	1
 	void	(*notify_event) (struct ci13xxx *ci, unsigned event);
+	/* set vbus power, it must be called in non-atomic context */
+	int	(*set_vbus_power) (struct ci13xxx *ci, int enable);
 };
 
 /* Default offset of capability registers */
