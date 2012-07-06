@@ -481,8 +481,8 @@ static int __devinit ci_hdrc_probe(struct platform_device *pdev)
 	}
 
 	platform_set_drvdata(pdev, ci);
-	ret = request_irq(ci->irq, ci_irq, IRQF_SHARED, ci->platdata->name,
-			  ci);
+	ret = devm_request_irq(dev, ci->irq, ci_irq, IRQF_SHARED,
+				ci->platdata->name, ci);
 	if (ret)
 		goto stop;
 
@@ -513,7 +513,6 @@ static int __devexit ci_hdrc_remove(struct platform_device *pdev)
 	flush_workqueue(ci->wq);
 	destroy_workqueue(ci->wq);
 	device_remove_file(ci->dev, &dev_attr_role);
-	free_irq(ci->irq, ci);
 	ci_role_stop(ci);
 
 	return 0;
