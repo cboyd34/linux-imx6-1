@@ -529,6 +529,12 @@
 					};
 				};
 
+				usbotg {
+					pinctrl_usbotg_1: usbotggrp-1 {
+						fsl,pins = <1591 0x17059>;	/* MX6Q_PAD_GPIO_1__USBOTG_ID */
+					};
+				};
+
 				usdhc3 {
 					pinctrl_usdhc3_1: usdhc3grp-1 {
 						fsl,pins = <1273 0x17059	/* MX6Q_PAD_SD3_CMD__USDHC3_CMD */
