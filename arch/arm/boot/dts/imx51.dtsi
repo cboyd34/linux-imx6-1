@@ -124,7 +124,7 @@
 				gpio-controller;
 				#gpio-cells = <2>;
 				interrupt-controller;
-				#interrupt-cells = <1>;
+				#interrupt-cells = <2>;
 			};
 
 			gpio2: gpio@73f88000 {
@@ -134,7 +134,7 @@
 				gpio-controller;
 				#gpio-cells = <2>;
 				interrupt-controller;
-				#interrupt-cells = <1>;
+				#interrupt-cells = <2>;
 			};
 
 			gpio3: gpio@73f8c000 {
@@ -144,7 +144,7 @@
 				gpio-controller;
 				#gpio-cells = <2>;
 				interrupt-controller;
-				#interrupt-cells = <1>;
+				#interrupt-cells = <2>;
 			};
 
 			gpio4: gpio@73f90000 {
@@ -154,7 +154,7 @@
 				gpio-controller;
 				#gpio-cells = <2>;
 				interrupt-controller;
-				#interrupt-cells = <1>;
+				#interrupt-cells = <2>;
 			};
 
 			wdog@73f98000 { /* WDOG1 */
