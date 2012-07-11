@@ -19,6 +19,7 @@
 		serial2 = &uart3;
 		serial3 = &uart4;
 		serial4 = &uart5;
+
 		gpio0 = &gpio1;
 		gpio1 = &gpio2;
 		gpio2 = &gpio3;
@@ -26,6 +27,11 @@
 		gpio4 = &gpio5;
 		gpio5 = &gpio6;
 		gpio6 = &gpio7;
+
+		usb0 = &usbotg;
+		usb1 = &usbhost1;
+		usb2 = &usbhost2;
+		usb3 = &usbhost3;
 	};
 
 	intc: interrupt-controller@00a01000 {
@@ -607,7 +613,7 @@
 				reg = <0x0217c000 0x4000>;
 			};
 
-			usb@02184000 { /* USB OTG */
+			usbotg: usb@02184000 {
 				compatible = "fsl,imx6q-usb", "fsl,imx31-usb";
 				reg = <0x02184000 0x200>;
 				interrupts = <0 43 0x04>;
@@ -615,7 +621,7 @@
 				status = "disabled";
 			};
 
-			usb@02184200 { /* USB1 */
+			usbhost1: usb@02184200 {
 				compatible = "fsl,imx6q-usb", "fsl,imx31-usb";
 				reg = <0x02184200 0x200>;
 				interrupts = <0 40 0x04>;
@@ -623,17 +629,23 @@
 				status = "disabled";
 			};
 
-			usb@02184400 { /* USB2 */
+			usbhost2: usb@02184400 {
 				compatible = "fsl,imx6q-usb", "fsl,imx31-usb";
 				reg = <0x02184400 0x200>;
 				interrupts = <0 41 0x04>;
 				status = "disabled";
 			};
 
-			usb@02184600 { /* USB3 */
+			usbhost3: usb@02184600 {
 				compatible = "fsl,imx6q-usb", "fsl,imx31-usb";
 				reg = <0x02184600 0x200>;
 				interrupts = <0 42 0x04>;
+				status = "disabled";
+			};
+
+			usbmisc@02184800 {
+				compatible = "fsl,imx6q-usbmisc";
+				reg = <0x02184800 0x200>;
 				status = "disabled";
 			};
 

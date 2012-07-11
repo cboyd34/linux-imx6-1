@@ -402,6 +402,7 @@ int __init mx6q_clocks_init(void)
 	clk_register_clkdev(clk[usboh3], NULL, "2184200.usb");
 	clk_register_clkdev(clk[usboh3], NULL, "2184400.usb");
 	clk_register_clkdev(clk[usboh3], NULL, "2184600.usb");
+	clk_register_clkdev(clk[usboh3], NULL, "2184800.usbmisc");
 	clk_register_clkdev(clk[usbphy1], NULL, "20c9000.usbphy");
 	clk_register_clkdev(clk[usbphy2], NULL, "20ca000.usbphy");
 	clk_register_clkdev(clk[per1_bch], "per1_bch", "112000.gpmi-nand");

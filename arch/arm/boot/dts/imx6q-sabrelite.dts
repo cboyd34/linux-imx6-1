@@ -81,6 +81,10 @@
 			usb@02184200 { /* USB1 */
 				status = "okay";
 			};
+			usbmisc@02184800 {
+				fsl,disable-over-current;
+				status = "okay";
+			};
 
 			ethernet@02188000 {
 				phy-mode = "rgmii";
