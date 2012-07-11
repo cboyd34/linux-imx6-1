@@ -1,0 +1,15 @@
+* Freescale i.MX non-core registers
+
+Required properties:
+- compatible: Should be "fsl,imx6q-usbmisc"
+- reg: Should contain registers location and length
+
+Optional properties:
+- fsl,disable-over-current: disable over current detect
+
+Examples:
+usbmisc@02184800 {
+	compatible = "fsl,imx6q-usbmisc";
+	reg = <0x02184800 0x200>;
+	fsl,disable-over-current;
+};

@@ -24,6 +24,8 @@
 
 #include "ci.h"
 
+int imx_usbmisc_init(struct device *usbdev);
+
 #define pdev_to_phy(pdev) \
 	((struct usb_phy *)platform_get_drvdata(pdev))
 #define ci_to_imx_data(ci) \
@@ -141,6 +143,8 @@ static int __devinit ci13xxx_imx_probe(struct platform_device *pdev)
 		*pdev->dev.dma_mask = DMA_BIT_MASK(32);
 		dma_set_coherent_mask(&pdev->dev, *pdev->dev.dma_mask);
 	}
+
+	imx_usbmisc_init(&pdev->dev);
 
 	platform_set_drvdata(pdev, data);
 
