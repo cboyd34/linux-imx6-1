@@ -81,6 +81,7 @@ static int __devexit ci13xxx_msm_remove(struct platform_device *pdev)
 {
 	struct platform_device *plat_ci = platform_get_drvdata(pdev);
 
+	pm_runtime_disable(&pdev->dev);
 	ci13xxx_remove_device(plat_ci);
 
 	return 0;
