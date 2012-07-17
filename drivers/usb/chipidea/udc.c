@@ -1,5 +1,5 @@
 /*
- * ci.c - ChipIdea UDC driver
+ * udc.c - ChipIdea UDC driver
  *
  * Copyright (C) 2008 Chipidea - MIPS Technologies, Inc. All rights reserved.
  *
