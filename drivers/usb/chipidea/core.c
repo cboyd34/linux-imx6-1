@@ -385,8 +385,8 @@ EXPORT_SYMBOL_GPL(ci13xxx_add_device);
 
 void ci13xxx_remove_device(struct platform_device *pdev)
 {
+	platform_device_unregister(pdev);
 	ida_simple_remove(&ci_ida, pdev->id);
-	platform_device_put(pdev);
 }
 EXPORT_SYMBOL_GPL(ci13xxx_remove_device);
 
