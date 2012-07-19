@@ -961,13 +961,13 @@ static int __devinit flexcan_probe(struct platform_device *pdev)
 		return PTR_ERR(pinctrl);
 
 	if (pdev->dev.of_node) {
-		const u32 *clock_freq_p;
+		const __be32 *clock_freq_p;
 		enum of_gpio_flags flags;
 
 		clock_freq_p = of_get_property(pdev->dev.of_node,
 						"clock-frequency", NULL);
 		if (clock_freq_p)
-			clock_freq = *clock_freq_p;
+			clock_freq = be32_to_cpup(clock_freq_p);
 
 		phy_en_gpio = of_get_named_gpio_flags(pdev->dev.of_node,
 						      "phy-enable-gpios",
@@ -1002,6 +1002,9 @@ static int __devinit flexcan_probe(struct platform_device *pdev)
 				goto failed_gpio;
 			}
 		}
+=======
+			clock_freq = be32_to_cpup(clock_freq_p);
+>>>>>>> master-3.4.y
 	}
 
 	if (!clock_freq) {
