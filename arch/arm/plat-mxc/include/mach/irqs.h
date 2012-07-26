@@ -11,7 +11,7 @@
 #ifndef __ASM_ARCH_MXC_IRQS_H__
 #define __ASM_ARCH_MXC_IRQS_H__
 
-#include <asm-generic/gpio.h>
+#include <asm/gpio.h>
 
 /*
  * SoCs with GIC interrupt controller have 160 IRQs, those with TZIC
