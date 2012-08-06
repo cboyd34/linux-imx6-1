@@ -1002,9 +1002,6 @@ static int __devinit flexcan_probe(struct platform_device *pdev)
 				goto failed_gpio;
 			}
 		}
-=======
-			clock_freq = be32_to_cpup(clock_freq_p);
->>>>>>> master-3.4.y
 	}
 
 	if (!clock_freq) {
