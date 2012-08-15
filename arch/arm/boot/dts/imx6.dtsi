@@ -614,7 +614,7 @@
 			};
 
 			usbotg: usb@02184000 {
-				compatible = "fsl,imx6q-usb", "fsl,imx31-usb";
+				compatible = "fsl,imx6q-usb", "fsl,imx27-usb";
 				reg = <0x02184000 0x200>;
 				interrupts = <0 43 0x04>;
 				fsl,usbphy = <&usbphy1>;
@@ -622,7 +622,7 @@
 			};
 
 			usbhost1: usb@02184200 {
-				compatible = "fsl,imx6q-usb", "fsl,imx31-usb";
+				compatible = "fsl,imx6q-usb", "fsl,imx27-usb";
 				reg = <0x02184200 0x200>;
 				interrupts = <0 40 0x04>;
 				fsl,usbphy = <&usbphy2>;
@@ -630,14 +630,14 @@
 			};
 
 			usbhost2: usb@02184400 {
-				compatible = "fsl,imx6q-usb", "fsl,imx31-usb";
+				compatible = "fsl,imx6q-usb", "fsl,imx27-usb";
 				reg = <0x02184400 0x200>;
 				interrupts = <0 41 0x04>;
 				status = "disabled";
 			};
 
 			usbhost3: usb@02184600 {
-				compatible = "fsl,imx6q-usb", "fsl,imx31-usb";
+				compatible = "fsl,imx6q-usb", "fsl,imx27-usb";
 				reg = <0x02184600 0x200>;
 				interrupts = <0 42 0x04>;
 				status = "disabled";
