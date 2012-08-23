@@ -43,19 +43,6 @@ void imx_set_cpu_jump(int cpu, void *jump_addr)
 		       src_base + SRC_GPR1 + cpu * 8);
 }
 
-void imx_src_prepare_restart(void)
-{
-	u32 val;
-
-	/* clear enable bits of secondary cores */
-	val = readl_relaxed(src_base + SRC_SCR);
-	val &= ~(0x7 << BP_SRC_SCR_CORE1_ENABLE);
-	writel_relaxed(val, src_base + SRC_SCR);
-
-	/* clear persistent entry register of primary core */
-	writel_relaxed(0, src_base + SRC_GPR1);
-}
-
 void __init imx_src_init(void)
 {
 	struct device_node *np;
